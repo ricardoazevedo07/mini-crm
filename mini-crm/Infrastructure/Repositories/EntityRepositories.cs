@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using mini_crm.Domain.Entities;
 using mini_crm.Domain.IRepositories;
 using mini_crm.Infrastructure.DbContext;
@@ -5,7 +6,18 @@ using mini_crm.Infrastructure.DbContext;
 namespace mini_crm.Infrastructure.Repositories;
 
 public sealed class EntidadeComercialRepository(AppDbContext context) : EfRepository<EntidadeComercial>(context), IEntidadeComercialRepository { }
-public sealed class ClienteRepository(AppDbContext context) : EfRepository<Cliente>(context), IClienteRepository { }
+public sealed class ClienteRepository(AppDbContext context) : EfRepository<Cliente>(context), IClienteRepository
+{
+    public override async Task<Cliente?> FindAsync(object[] keyValues, CancellationToken cancellationToken = default)
+    {
+        if (keyValues.Length != 1 || keyValues[0] is not long id)
+            return null;
+        return await Context.Clientes
+            .Include(x => x.Contatos)
+            .Include(x => x.Contratos)
+            .SingleOrDefaultAsync(x => x.EntidadeComercialId == id, cancellationToken);
+    }
+}
 public sealed class InfluencerRepository(AppDbContext context) : EfRepository<Influencer>(context), IInfluencerRepository { }
 public sealed class RedeSocialRepository(AppDbContext context) : EfRepository<RedeSocial>(context), IRedeSocialRepository { }
 public sealed class InfluencerRedeSocialRepository(AppDbContext context) : EfRepository<InfluencerRedeSocial>(context), IInfluencerRedeSocialRepository { }

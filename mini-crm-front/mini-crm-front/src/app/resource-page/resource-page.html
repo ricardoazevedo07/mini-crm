@@ -1,0 +1,41 @@
+<section class="resource-page">
+  <header class="page-header">
+    <div><p class="eyebrow">CRM</p><h1>{{ title }}</h1></div>
+    <button type="button" class="primary-button" (click)="openCreate()">Novo</button>
+  </header>
+
+  @if (loading) { <div class="state">Carregando...</div> }
+  @if (error) { <div class="error-state"><strong>{{ error.title ?? 'Erro' }}</strong><span>{{ error.detail ?? 'Não foi possível concluir a operação.' }}</span><button type="button" (click)="load()">Tentar novamente</button></div> }
+
+  @if (!loading) {
+    @if (items.length === 0) {
+      <div class="state">Nenhum registro encontrado.</div>
+    } @else {
+      <div class="table-wrap">
+        <table>
+          <thead><tr>@for (key of keys(items[0]); track key) { <th>{{ key }}</th> }<th>Ações</th></tr></thead>
+          <tbody>
+            @for (item of items; track idOf(item)) {
+              <tr>@for (key of keys(item); track key) { <td><button type="button" class="cell-link" (click)="openDetail(item)">{{ item[key] }}</button></td> }<td class="row-actions"><button type="button" (click)="openEdit(item)">Editar</button>@for (command of commands; track command.path) { <button type="button" class="command-button" (click)="runCommand(item, command)">{{ command.label }}</button> }</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+
+  @if (selected) {
+    <aside class="detail-panel"><header><h2>Detalhes</h2><button type="button" (click)="selected = null">×</button></header><dl>@for (key of keys(selected); track key) { <div><dt>{{ key }}</dt><dd>{{ selected[key] }}</dd></div> }</dl></aside>
+  }
+
+  @if (formOpen) {
+    <div class="modal-backdrop" (click)="formOpen = false">
+      <section class="modal" role="dialog" aria-modal="true" aria-label="Cadastro" (click)="$event.stopPropagation()">
+        <header><h2>{{ editingId === null ? 'Criar' : 'Editar' }} {{ title }}</h2><button type="button" (click)="formOpen = false">×</button></header>
+        <label>Dados JSON<textarea [(ngModel)]="bodyText" rows="12"></textarea></label>
+        @if (error) { <p class="inline-error">{{ error.detail }}</p> }
+        <footer><button type="button" class="secondary-button" (click)="formOpen = false">Cancelar</button><button type="button" class="primary-button" (click)="save()">Salvar</button></footer>
+      </section>
+    </div>
+  }
+</section>

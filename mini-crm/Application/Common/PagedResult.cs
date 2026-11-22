@@ -2,13 +2,13 @@ namespace mini_crm.Application.Common;
 
 public sealed record PageRequest(int Page = 1, int PageSize = 20)
 {
-    public int NormalizedPage => Page < 1 ? 1 : Page;
-    public int NormalizedPageSize => PageSize switch
+    public void Validate()
     {
-        < 1 => 20,
-        > 100 => 100,
-        _ => PageSize
-    };
+        if (Page < 1)
+            throw new ArgumentOutOfRangeException(nameof(Page), "Page must be greater than or equal to 1.");
+        if (PageSize is < 1 or > 100)
+            throw new ArgumentOutOfRangeException(nameof(PageSize), "PageSize must be between 1 and 100.");
+    }
 }
 
 public sealed record PagedResult<T>(IReadOnlyList<T> Items, int Page, int PageSize, int TotalCount)

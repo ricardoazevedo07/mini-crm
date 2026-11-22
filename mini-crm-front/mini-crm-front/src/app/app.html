@@ -1,0 +1,26 @@
+<div class="crm-shell">
+  <aside class="crm-sidebar" [class.is-open]="menuOpen">
+    <a class="brand" routerLink="/dashboard" aria-label="Influence CRM dashboard"><span class="brand-mark">I</span><span>Influence CRM</span></a>
+    <nav class="main-nav" aria-label="Navegação principal">
+      <a routerLink="/dashboard" routerLinkActive="active"><span>◫</span> Dashboard</a>
+      <a routerLink="/customers" routerLinkActive="active"><span>◉</span> Clientes</a>
+      <a routerLink="/leads" routerLinkActive="active"><span>↗</span> Leads</a>
+      <a routerLink="/opportunities" routerLinkActive="active"><span>◇</span> Oportunidades</a>
+      <a routerLink="/campaigns" routerLinkActive="active"><span>▦</span> Campanhas</a>
+      <a routerLink="/influencers" routerLinkActive="active"><span>◎</span> Influenciadores</a>
+      <a routerLink="/contracts" routerLinkActive="active"><span>▣</span> Contratos</a>
+      <a routerLink="/deliverables" routerLinkActive="active"><span>✓</span> Entregáveis</a>
+      <a routerLink="/finance" routerLinkActive="active"><span>R$</span> Financeiro</a>
+      <a routerLink="/tasks" routerLinkActive="active"><span>☑</span> Tarefas</a>
+    </nav>
+    <div class="sidebar-footer"><span class="avatar">RA</span><div><strong>Área operacional</strong><small>Sem autenticação</small></div></div>
+  </aside>
+  <div class="crm-workspace">
+    <header class="crm-topbar">
+      <button class="menu-button" type="button" (click)="toggleMenu()" aria-label="Abrir menu">☰</button>
+      <label class="global-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="Buscar no CRM" aria-label="Buscar no CRM" /></label>
+      <a class="notification-button" routerLink="/notifications" aria-label="Notificações">◷</a>
+    </header>
+    <main class="crm-content"><router-outlet /></main>
+  </div>
+</div>

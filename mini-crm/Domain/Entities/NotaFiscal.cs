@@ -10,4 +10,7 @@ public class NotaFiscal
     public FormatoNotaFiscal FormatoNotaFiscal { get; set; } = null!;
     public ICollection<Pagamento> Pagamentos { get; set; } = new List<Pagamento>();
     public ICollection<AgendamentoNotaFiscal> Agendamentos { get; set; } = new List<AgendamentoNotaFiscal>();
+    public long? CampanhaId { get; set; }
+    public long? ContaReceberId { get; set; }
+    public long? ContaPagarId { get; set; }
 }

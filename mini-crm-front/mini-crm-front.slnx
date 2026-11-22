@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="mini-crm-front/mini-crm-front.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+</Solution>

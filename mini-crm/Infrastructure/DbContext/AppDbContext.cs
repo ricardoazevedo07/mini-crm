@@ -7,6 +7,24 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : Microsoft.En
 {
     public DbSet<EntidadeComercial> EntidadesComerciais => Set<EntidadeComercial>();
     public DbSet<Cliente> Clientes => Set<Cliente>();
+    public DbSet<ContatoCliente> ContatosClientes => Set<ContatoCliente>();
+    public DbSet<Oportunidade> Oportunidades => Set<Oportunidade>();
+    public DbSet<Campanha> Campanhas => Set<Campanha>();
+    public DbSet<ParticipacaoCampanha> ParticipacoesCampanha => Set<ParticipacaoCampanha>();
+    public DbSet<EntregaCampanha> EntregasCampanha => Set<EntregaCampanha>();
+    public DbSet<ContaReceber> ContasReceber => Set<ContaReceber>();
+    public DbSet<ContaPagar> ContasPagar => Set<ContaPagar>();
+    public DbSet<RepasseCreator> RepassesCreators => Set<RepasseCreator>();
+    public DbSet<LancamentoLiquidacao> LancamentosLiquidacao => Set<LancamentoLiquidacao>();
+    public DbSet<VersaoContrato> VersoesContrato => Set<VersaoContrato>();
+    public DbSet<Lead> Leads => Set<Lead>();
+    public DbSet<Proposta> Propostas => Set<Proposta>();
+    public DbSet<ItemProposta> ItensProposta => Set<ItemProposta>();
+    public DbSet<MarcoCampanha> MarcosCampanha => Set<MarcoCampanha>();
+    public DbSet<SolicitacaoCuradoria> SolicitacoesCuradoria => Set<SolicitacaoCuradoria>();
+    public DbSet<CandidatoCuradoria> CandidatosCuradoria => Set<CandidatoCuradoria>();
+    public DbSet<TarefaCrm> TarefasCrm => Set<TarefaCrm>();
+    public DbSet<NotificacaoCrm> NotificacoesCrm => Set<NotificacaoCrm>();
     public DbSet<Influencer> Influencers => Set<Influencer>();
     public DbSet<RedeSocial> RedesSociais => Set<RedeSocial>();
     public DbSet<InfluencerRedeSocial> InfluencerRedesSociais => Set<InfluencerRedeSocial>();
@@ -29,6 +47,78 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : Microsoft.En
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<Lead>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+            entity.Property(x => x.Nome).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.Email).HasMaxLength(200);
+            entity.Property(x => x.Status).HasMaxLength(30).IsRequired();
+        });
+
+        modelBuilder.Entity<Proposta>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+            entity.Property(x => x.Status).HasMaxLength(30).IsRequired();
+            entity.ComplexProperty(x => x.ValorTotal, money =>
+            {
+                money.Property(x => x.Valor).HasPrecision(18, 2);
+                money.Property(x => x.CodigoMoeda).HasMaxLength(3).IsRequired();
+            });
+            entity.HasIndex(x => new { x.OportunidadeId, x.Versao }).IsUnique();
+        });
+
+        modelBuilder.Entity<ItemProposta>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+            entity.Property(x => x.Descricao).HasMaxLength(500).IsRequired();
+            entity.Property(x => x.Quantidade).HasPrecision(18, 4);
+            entity.ComplexProperty(x => x.ValorUnitario, money =>
+            {
+                money.Property(x => x.Valor).HasPrecision(18, 2);
+                money.Property(x => x.CodigoMoeda).HasMaxLength(3).IsRequired();
+            });
+        });
+
+        modelBuilder.Entity<MarcoCampanha>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+            entity.Property(x => x.Nome).HasMaxLength(200).IsRequired();
+            entity.HasIndex(x => new { x.CampanhaId, x.DataLimiteUtc });
+        });
+
+        modelBuilder.Entity<SolicitacaoCuradoria>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Status).HasMaxLength(30).IsRequired();
+            entity.Property(x => x.Briefing).HasMaxLength(4000).IsRequired();
+        });
+
+        modelBuilder.Entity<CandidatoCuradoria>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Status).HasMaxLength(30).IsRequired();
+            entity.Property(x => x.Avaliacao).HasPrecision(5, 2);
+            entity.HasIndex(x => new { x.SolicitacaoCuradoriaId, x.InfluencerEntidadeComercialId }).IsUnique();
+        });
+
+        modelBuilder.Entity<TarefaCrm>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Titulo).HasMaxLength(300).IsRequired();
+            entity.Property(x => x.Status).HasMaxLength(30).IsRequired();
+        });
+
+        modelBuilder.Entity<NotificacaoCrm>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Titulo).HasMaxLength(300).IsRequired();
+            entity.Property(x => x.Mensagem).HasMaxLength(2000).IsRequired();
+        });
+
         modelBuilder.Entity<EntidadeComercial>(entity =>
         {
             entity.HasKey(x => x.EntidadeComercialId);
@@ -43,6 +133,29 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : Microsoft.En
         {
             entity.Property(x => x.Id).ValueGeneratedNever();
             entity.Property(x => x.Codigo).HasMaxLength(100).IsRequired();
+            entity.Property(x => x.Nome).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.Cnpj).HasMaxLength(14).IsRequired();
+            entity.Property(x => x.Segmento).HasMaxLength(200);
+            entity.Property(x => x.PreferenciaIdioma).HasMaxLength(20);
+            entity.Property(x => x.Ativo).IsRequired();
+            entity.HasIndex(x => x.Cnpj)
+                .IsUnique()
+                .HasFilter("`Ativo` = 1");
+        });
+
+        modelBuilder.Entity<ContatoCliente>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedNever();
+            entity.Property(x => x.Nome).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.Cargo).HasMaxLength(200);
+            entity.Property(x => x.Email).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.Telefone).HasMaxLength(100);
+            entity.HasIndex(x => new { x.ClienteEntidadeComercialId, x.Principal });
+            entity.HasOne(x => x.Cliente)
+                .WithMany(x => x.Contatos)
+                .HasForeignKey(x => x.ClienteEntidadeComercialId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Influencer>(entity =>
@@ -60,6 +173,106 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : Microsoft.En
         {
             entity.Property(x => x.Id).ValueGeneratedNever();
             entity.Property(x => x.Nome).HasMaxLength(200).IsRequired();
+        });
+
+        modelBuilder.Entity<Oportunidade>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+            entity.Property(x => x.Briefing).HasMaxLength(4000);
+            entity.Property(x => x.MotivoPerda).HasMaxLength(1000);
+            entity.Property(x => x.Status).HasConversion<string>().HasMaxLength(30).IsRequired();
+            entity.ComplexProperty(x => x.OrcamentoEstimado, money =>
+            {
+                money.Property(x => x.Valor).HasPrecision(18, 2);
+                money.Property(x => x.CodigoMoeda).HasMaxLength(3).IsRequired();
+            });
+            entity.HasIndex(x => x.CampanhaId).IsUnique();
+            entity.HasIndex(x => new { x.ClienteEntidadeComercialId, x.Status });
+        });
+
+        modelBuilder.Entity<Campanha>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+            entity.Property(x => x.Frente).HasMaxLength(200).IsRequired();
+            entity.Property(x => x.Status).HasConversion<string>().HasMaxLength(30).IsRequired();
+            entity.Property(x => x.Taxa).HasPrecision(18, 4);
+            entity.ComplexProperty(x => x.TotalAprovado, money =>
+            {
+                money.Property(x => x.Valor).HasPrecision(18, 2);
+                money.Property(x => x.CodigoMoeda).HasMaxLength(3).IsRequired();
+            });
+            entity.HasIndex(x => x.OportunidadeId).IsUnique();
+            entity.HasIndex(x => new { x.ClienteEntidadeComercialId, x.Status });
+        });
+
+        modelBuilder.Entity<ParticipacaoCampanha>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedNever();
+            entity.Property(x => x.Termos).HasMaxLength(4000);
+            entity.Property(x => x.Status).HasConversion<string>().HasMaxLength(30).IsRequired();
+            entity.ComplexProperty(x => x.CompensacaoNegociada, money =>
+            {
+                money.Property(x => x.Valor).HasPrecision(18, 2);
+                money.Property(x => x.CodigoMoeda).HasMaxLength(3).IsRequired();
+            });
+            entity.ComplexProperty(x => x.CompensacaoAprovada, money =>
+            {
+                money.Property(x => x.Valor).HasPrecision(18, 2);
+                money.Property(x => x.CodigoMoeda).HasMaxLength(3).IsRequired();
+            });
+            entity.HasIndex(x => new { x.CampanhaId, x.InfluencerEntidadeComercialId, x.Status });
+        });
+
+        modelBuilder.Entity<EntregaCampanha>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedNever();
+            entity.Property(x => x.Titulo).HasMaxLength(300).IsRequired();
+            entity.Property(x => x.MotivoRejeicao).HasMaxLength(1000);
+            entity.Property(x => x.EvidenciaPublicacao).HasMaxLength(2000);
+            entity.Property(x => x.Status).HasConversion<string>().HasMaxLength(30).IsRequired();
+            entity.HasIndex(x => new { x.CampanhaId, x.Status });
+        });
+
+        modelBuilder.Entity<ContaReceber>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+            entity.Property(x => x.ValorRecebidoAcumulado).HasPrecision(18, 2);
+            entity.Property(x => x.Status).HasConversion<string>().HasMaxLength(30).IsRequired();
+            entity.ComplexProperty(x => x.Valor, money => { money.Property(x => x.Valor).HasPrecision(18, 2); money.Property(x => x.CodigoMoeda).HasMaxLength(3).IsRequired(); });
+            entity.ComplexProperty(x => x.ValorAprovado, money => { money.Property(x => x.Valor).HasPrecision(18, 2); money.Property(x => x.CodigoMoeda).HasMaxLength(3).IsRequired(); });
+            entity.Ignore(x => x.Saldo);
+            entity.HasIndex(x => new { x.CampanhaId, x.Status });
+        });
+
+        modelBuilder.Entity<ContaPagar>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+            entity.Property(x => x.ValorPagoAcumulado).HasPrecision(18, 2);
+            entity.Property(x => x.Status).HasConversion<string>().HasMaxLength(30).IsRequired();
+            entity.ComplexProperty(x => x.Valor, money => { money.Property(x => x.Valor).HasPrecision(18, 2); money.Property(x => x.CodigoMoeda).HasMaxLength(3).IsRequired(); });
+            entity.ComplexProperty(x => x.ValorAprovado, money => { money.Property(x => x.Valor).HasPrecision(18, 2); money.Property(x => x.CodigoMoeda).HasMaxLength(3).IsRequired(); });
+            entity.HasIndex(x => new { x.CampanhaId, x.Status });
+        });
+
+        modelBuilder.Entity<RepasseCreator>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Status).HasConversion<string>().HasMaxLength(30).IsRequired();
+            entity.ComplexProperty(x => x.Valor, money => { money.Property(x => x.Valor).HasPrecision(18, 2); money.Property(x => x.CodigoMoeda).HasMaxLength(3).IsRequired(); });
+        });
+
+        modelBuilder.Entity<LancamentoLiquidacao>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Referencia).HasMaxLength(500).IsRequired();
+            entity.ComplexProperty(x => x.Valor, money => { money.Property(x => x.Valor).HasPrecision(18, 2); money.Property(x => x.CodigoMoeda).HasMaxLength(3).IsRequired(); });
+            entity.HasIndex(x => new { x.ContaReceberId, x.ContaPagarId });
         });
 
         modelBuilder.Entity<RedeSocial>(entity =>
@@ -138,6 +351,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : Microsoft.En
             entity.HasKey(x => x.Id);
             entity.Property(x => x.Divisao).HasConversion<string>().HasMaxLength(50).IsRequired();
             entity.Property(x => x.Moeda).HasConversion<string>().HasMaxLength(20).IsRequired();
+            entity.Property(x => x.StatusCrm).HasConversion<string>().HasMaxLength(30).IsRequired();
+            entity.Property(x => x.MotivoCancelamento).HasMaxLength(1000);
+            entity.HasIndex(x => new { x.CampanhaId, x.InfluencerParticipacaoId });
             entity.HasOne(x => x.Cliente)
                 .WithMany(x => x.Contratos)
                 .HasForeignKey(x => x.ClienteEntidadeComercialId)
@@ -150,6 +366,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : Microsoft.En
                 .WithMany(x => x.Contratos)
                 .HasForeignKey(x => x.InfluencerEntidadeComercialId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<VersaoContrato>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedNever();
+            entity.Property(x => x.ConteudoSnapshot).HasColumnType("longtext").IsRequired();
+            entity.HasOne<Contrato>()
+                .WithMany(x => x.Versoes)
+                .HasForeignKey(x => x.ContratoId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasIndex(x => new { x.ContratoId, x.Numero }).IsUnique();
         });
 
         modelBuilder.Entity<Despesa>(entity =>
@@ -196,6 +424,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : Microsoft.En
             entity.HasKey(x => x.Id);
             entity.Property(x => x.RazaoSocial).HasMaxLength(200).IsRequired();
             entity.Property(x => x.Valor).HasPrecision(18, 2);
+            entity.Property(x => x.CampanhaId);
+            entity.Property(x => x.ContaReceberId);
+            entity.Property(x => x.ContaPagarId);
             entity.HasOne(x => x.FormatoNotaFiscal)
                 .WithMany(x => x.NotasFiscais)
                 .HasForeignKey(x => x.FormatoNotaFiscalId)

@@ -19,8 +19,9 @@ public class EfRepository<TEntity>(AppDbContext context) : IRepository<TEntity>,
 
     public virtual async Task<PagedResult<TEntity>> PageAsync(PageRequest request, CancellationToken cancellationToken = default)
     {
-        var page = request.NormalizedPage;
-        var pageSize = request.NormalizedPageSize;
+        request.Validate();
+        var page = request.Page;
+        var pageSize = request.PageSize;
         var query = Set.AsNoTracking();
         var keyProperty = Context.Model.FindEntityType(typeof(TEntity))?.FindPrimaryKey()?.Properties.FirstOrDefault()?.Name;
         if (keyProperty is not null)
