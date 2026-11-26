@@ -1,1 +1,12 @@
-h1{margin:2px 0 6px;font-size:28px}.eyebrow{margin:0;color:#6c63ff;font-size:12px;font-weight:800;text-transform:uppercase}.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.page-header p:last-child{margin:0;color:#64748b}.primary-button{border:0;border-radius:9px;padding:11px 16px;background:#6157ef;color:#fff;font-weight:700}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.metrics article,.panel{border:1px solid #e7eaf0;border-radius:12px;background:#fff}.metrics article{display:flex;flex-direction:column;gap:7px;padding:18px}.metrics article span{color:#64748b;font-size:13px}.metrics article strong{font-size:24px}.metrics article small{color:#94a3b8}.dashboard-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:14px;margin-top:14px}.panel{padding:18px}.panel header{display:flex;align-items:center;justify-content:space-between}.panel h2{margin:0;font-size:16px}.panel header a{color:#6157ef;font-size:13px;text-decoration:none}.table-placeholder{display:grid;grid-template-columns:1fr auto;gap:12px;margin-top:18px}.table-placeholder b{color:#6157ef;font-size:12px}.task-list{list-style:none;margin:14px 0 0;padding:0}.task-list li{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #edf0f5}.task-list small{color:#94a3b8}@media(max-width:900px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-grid{grid-template-columns:1fr}}@media(max-width:560px){.metrics{grid-template-columns:1fr}.page-header{align-items:flex-start;gap:12px}.primary-button{white-space:nowrap}}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:var(--space-2)}
+.kpi{display:flex;flex-direction:column;gap:6px;padding:14px 16px;color:var(--texto);text-decoration:none;transition:border-color .15s ease}
+.kpi:hover{border-color:var(--acao);color:var(--texto);text-decoration:none}
+.kpi strong{font-size:28px;line-height:36px;font-weight:600;font-variant-numeric:tabular-nums}
+.kpi small{font-size:12px;color:var(--texto-2)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(420px,100%),1fr));gap:var(--space-3);margin-top:var(--space-3)}
+.panel{padding:14px 16px}
+.panel header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.panel h2{margin:0;font-size:14px}
+.panel header a{font-size:13px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--borda)}
+.row:first-of-type{border-top:0}

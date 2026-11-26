@@ -1,1 +1,62 @@
-/* You can add global styles to this file, and also import other style files */
+/* Design System "CRM" — tokens (claro e escuro) e componentes base. */
+:root{--font-sans:"IBM Plex Sans",system-ui,sans-serif;--font-mono:"IBM Plex Mono",ui-monospace,monospace;
+--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-6:24px;--space-8:32px;--radius-sm:4px;--radius-md:8px;--radius-pill:999px;
+--fundo:#f6f4ef;--superficie:#ffffff;--hover:#efece4;--borda:#e4e0d6;--borda-forte:#cfc9bc;--texto:#1a1917;--texto-2:#5f5b53;--texto-desativado:#a9a397;
+--acao:#2338c9;--acao-hover:#1b2ca0;--acao-texto:#2338c9;--selecao:#e8eaf9;--foco:#2338c9;
+--ok:#1e5a3e;--ok-fundo:#e3ece6;--atencao:#7a5208;--atencao-fundo:#f4ead8;--travado:#8e2a1e;--travado-fundo:#f3e1dd;
+--shadow-float:0 0 0 1px #e4e0d6,0 16px 40px -16px rgba(26,25,23,.25);color-scheme:light}
+html[data-theme="dark"]{--fundo:#141413;--superficie:#1c1c1a;--hover:rgba(255,255,255,.04);--borda:rgba(255,255,255,.08);--borda-forte:rgba(255,255,255,.18);
+--texto:#edebe6;--texto-2:#a8a49b;--texto-desativado:#6b675f;--acao:#2338c9;--acao-hover:#3a4fd8;--acao-texto:#9aa5f5;--selecao:rgba(35,56,201,.30);--foco:#9aa5f5;
+--ok:#86c2a2;--ok-fundo:rgba(30,90,62,.35);--atencao:#e3b566;--atencao-fundo:rgba(122,82,8,.40);--travado:#ec9a88;--travado-fundo:rgba(142,42,30,.40);
+--shadow-float:0 0 0 1px rgba(255,255,255,.08),0 24px 48px -24px rgba(0,0,0,.8);color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--fundo);color:var(--texto);font-family:var(--font-sans);font-size:14px;line-height:20px;-webkit-font-smoothing:antialiased}
+a{color:var(--acao-texto)}a:hover{color:var(--acao-texto);text-decoration:underline}
+:focus-visible{outline:2px solid var(--foco);outline-offset:2px}
+h1,h2,h3{font-weight:600;letter-spacing:-.01em}
+.ic{flex:none}
+.mono,.code{font-family:var(--font-mono);font-size:12px}
+/* botões */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);min-height:36px;padding:0 var(--space-4);border-radius:var(--radius-sm);border:1px solid transparent;font:inherit;font-weight:500;cursor:pointer;white-space:nowrap;text-decoration:none}
+.btn:hover{text-decoration:none}
+.btn--primary{background:var(--acao);color:#fff}.btn--primary:hover{background:var(--acao-hover);color:#fff}
+.btn--secondary{background:var(--superficie);color:var(--texto);border-color:var(--borda-forte)}.btn--secondary:hover{background:var(--hover);color:var(--texto)}
+.btn--ghost{background:transparent;color:var(--texto-2)}.btn--ghost:hover{color:var(--acao-texto);background:var(--hover)}
+.btn--sm{min-height:30px;padding:0 10px;font-size:13px}
+.btn--icon{min-width:36px;padding:0}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+/* status: ponto + texto */
+.status{display:inline-flex;align-items:center;gap:6px;font-size:12px;line-height:16px;font-weight:500;white-space:nowrap;color:var(--texto-2)}
+.status::before{content:"";width:6px;height:6px;border-radius:var(--radius-pill);background:currentColor}
+.status--ok{color:var(--ok)}.status--atencao{color:var(--atencao)}.status--travado{color:var(--travado)}.status--acao{color:var(--acao-texto)}
+/* cabeçalho de página */
+.page-header{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--space-4);flex-wrap:wrap;margin-bottom:var(--space-6)}
+.page-header h1{margin:0;font-size:24px;line-height:32px}
+.page-header p{margin:4px 0 0;color:var(--texto-2);max-width:72ch}
+.eyebrow{margin:0 0 2px;font-family:var(--font-mono);font-size:12px;color:var(--texto-2);text-transform:uppercase;letter-spacing:.04em}
+/* cartões e tabelas */
+.card{background:var(--superficie);border:1px solid var(--borda);border-radius:var(--radius-md)}
+.table-wrap{overflow:auto;background:var(--superficie);border:1px solid var(--borda);border-radius:var(--radius-md)}
+.table{width:100%;border-collapse:collapse;font-size:13px}
+.table th{position:sticky;top:0;background:var(--fundo);text-align:left;font-size:12px;font-weight:500;color:var(--texto-2);padding:10px 14px;border-bottom:1px solid var(--borda);white-space:nowrap}
+.table td{padding:10px 14px;border-bottom:1px solid var(--borda);vertical-align:middle}
+.table tbody tr:last-child td{border-bottom:0}
+.table tbody tr:hover{background:var(--hover)}
+/* estados */
+.state{display:flex;flex-direction:column;align-items:center;gap:var(--space-2);padding:var(--space-8) var(--space-4);border:1px dashed var(--borda-forte);border-radius:var(--radius-md);color:var(--texto-2);text-align:center}
+.state strong{color:var(--texto);font-weight:600}
+.state--erro{border-style:solid;border-color:var(--travado);background:var(--travado-fundo)}
+.state--erro strong{color:var(--travado)}
+/* painel lateral e janela */
+.overlay{position:fixed;inset:0;background:rgba(20,20,19,.36);z-index:60}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(520px,100%);z-index:61;display:flex;flex-direction:column;background:var(--superficie);border-left:1px solid var(--borda);box-shadow:var(--shadow-float)}
+.drawer__head{display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-3);padding:var(--space-4) 20px;border-bottom:1px solid var(--borda)}
+.drawer__head h2{margin:0;font-size:18px;line-height:26px}
+.drawer__body{flex:1;overflow:auto;padding:var(--space-4) 20px}
+.drawer__foot{display:flex;justify-content:flex-end;gap:var(--space-2);padding:var(--space-3) 20px;border-top:1px solid var(--borda)}
+.dl{display:grid;grid-template-columns:minmax(120px,38%) minmax(0,1fr);gap:8px 12px;margin:0}
+.dl dt{color:var(--texto-2)}.dl dd{margin:0;font-weight:500;overflow-wrap:anywhere}
+.field{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500;color:var(--texto-2)}
+.field input,.field select,.field textarea{font:inherit;font-weight:400;color:var(--texto);background:var(--superficie);border:1px solid var(--borda-forte);border-radius:var(--radius-sm);padding:8px 10px}
+.field textarea{font-family:var(--font-mono);font-size:12px;line-height:18px;resize:vertical}
+.kbd{font-family:var(--font-mono);font-size:11px;line-height:16px;color:var(--texto-2);border:1px solid var(--borda-forte);border-radius:var(--radius-sm);padding:0 5px}

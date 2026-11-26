@@ -6,7 +6,7 @@ import { NotFound } from './not-found/not-found';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
-  { path: 'dashboard', component: Dashboard, title: 'Dashboard' },
+  { path: 'dashboard', component: Dashboard, title: 'Gestão', data: { title: 'Gestão' } },
   { path: 'customers', component: ResourcePage, title: 'Clientes', data: { title: 'Clientes', resource: 'customers', bodyTemplate: '{"name":"","cnpj":"","segmento":"","preferenciaIdioma":"pt-BR","codigo":""}' } },
   { path: 'customers/:id/contacts', component: ResourcePage, title: 'Contatos do cliente', data: { title: 'Contatos do cliente', resource: 'customers/{id}/contacts', bodyTemplate: '{"name":"","cargo":"","email":"","telefone":"","principal":false}' } },
   { path: 'leads', component: ResourcePage, title: 'Leads', data: { title: 'Leads', resource: 'leads', bodyTemplate: '{"nome":"","empresa":"","email":"","telefone":"","responsavelId":null}', commands: [{ label: 'Qualificar', path: 'qualify' }, { label: 'Marcar perdido', path: 'lose' }] } },
@@ -18,7 +18,7 @@ const routes: Routes = [
   { path: 'campaigns/:campaignId/creators', component: ResourcePage, title: 'Criadores da campanha', data: { title: 'Criadores da campanha', resource: 'campaigns/{campaignId}/creators', bodyTemplate: '{"influencerEntidadeComercialId":0,"compensacao":0,"moeda":"BRL","termos":""}' } },
   { path: 'campaigns/:id/timeline', component: ResourcePage, title: 'Linha do tempo da campanha', data: { title: 'Linha do tempo da campanha', resource: 'campaigns/{id}/timeline', bodyTemplate: '{}' } },
   { path: 'campaigns/:id/summary', component: ResourcePage, title: 'Resumo da campanha', data: { title: 'Resumo da campanha', resource: 'campaigns/{id}/summary', bodyTemplate: '{}' } },
-  { path: 'influencers', component: ResourcePage, title: 'Influenciadores', data: { title: 'Influenciadores', resource: 'influencers', bodyTemplate: '{}' } },
+  { path: 'influencers', component: ResourcePage, title: 'Creators', data: { title: 'Creators', resource: 'influencers', bodyTemplate: '{}' } },
   { path: 'influencers/:influencerId/social-profiles', component: ResourcePage, title: 'Perfis sociais', data: { title: 'Perfis sociais', resource: 'influencers/{influencerId}/social-profiles', bodyTemplate: '{}' } },
   { path: 'influencers/:influencerId/payment-profiles', component: ResourcePage, title: 'Perfis de pagamento', data: { title: 'Perfis de pagamento', resource: 'influencers/{influencerId}/payment-profiles', bodyTemplate: '{}' } },
   { path: 'curation-requests', component: ResourcePage, title: 'Solicitações de curadoria', data: { title: 'Solicitações de curadoria', resource: 'curation-requests', bodyTemplate: '{"campanhaId":0,"briefing":""}' } },
