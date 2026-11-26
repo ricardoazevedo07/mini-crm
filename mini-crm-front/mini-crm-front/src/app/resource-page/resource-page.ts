@@ -98,6 +98,28 @@ export class ResourcePage implements OnInit {
     return Object.keys(item).filter((key) => key !== 'pagamentos' && key !== 'contratos').slice(0, 6);
   }
 
+  allKeys(item: Record<string, unknown>): string[] {
+    return Object.keys(item);
+  }
+
+  /** Transforma o nome técnico do campo em rótulo legível (ex.: dataVencimentoUtc → Data vencimento). */
+  label(key: string): string {
+    const words = key.replace(/Utc$/, '').replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/_/g, ' ').toLowerCase();
+    return words.charAt(0).toUpperCase() + words.slice(1);
+  }
+
+  isStatus(key: string): boolean {
+    return /status|situacao/i.test(key);
+  }
+
+  statusClass(value: unknown): string {
+    const v = String(value ?? '').toLowerCase();
+    if (/(ganh|aprov|conclu|pago|assinad|ativ|execu|lida)/.test(v)) return 'status--ok';
+    if (/(perd|cancel|rejeit|atras|vencid)/.test(v)) return 'status--travado';
+    if (/(pend|abert|envi|aguard|propos|rascunho)/.test(v)) return 'status--atencao';
+    return '';
+  }
+
   idOf(item: Record<string, unknown>): string | number {
     return (item['id'] ?? item['entidadeComercialId'] ?? '-') as string | number;
   }

@@ -1,13 +1,25 @@
-<section class="dashboard">
-  <header class="page-header"><div><p class="eyebrow">Visão geral</p><h1>Dashboard</h1><p>Acompanhe oportunidades, campanhas e operações comerciais.</p></div><button type="button" class="primary-button">Nova campanha</button></header>
-  <div class="metrics">
-    <article><span>Oportunidades abertas</span><strong>12</strong><small>3 em proposta</small></article>
-    <article><span>Campanhas ativas</span><strong>8</strong><small>2 em aprovação</small></article>
-    <article><span>Entregáveis pendentes</span><strong>17</strong><small>5 próximos do prazo</small></article>
-    <article><span>Saldo financeiro</span><strong>R$ 184 mil</strong><small>Receber menos pagar</small></article>
+<section class="dash">
+  <header class="page-header">
+    <div><p class="eyebrow">Visão geral</p><h1>Gestão</h1><p>Oportunidades, campanhas, entregas e caixa em um só lugar. Números de exemplo até a tela ser ligada à API.</p></div>
+    <a class="btn btn--primary" routerLink="/campaigns"><svg class="ic" width="18" height="18" viewBox="0 0 32 32" aria-hidden="true" fill="currentColor"><path d="M17 15 17 8 15 8 15 15 8 15 8 17 15 17 15 24 17 24 17 17 24 17 24 15z"/></svg>Nova campanha</a>
+  </header>
+  <div class="kpis">
+    <a class="kpi card" routerLink="/opportunities"><span class="status status--acao">Oportunidades abertas</span><strong>12</strong><small>3 em proposta</small></a>
+    <a class="kpi card" routerLink="/campaigns"><span class="status status--ok">Campanhas ativas</span><strong>8</strong><small>2 em aprovação</small></a>
+    <a class="kpi card" routerLink="/deliverables"><span class="status status--atencao">Entregas pendentes</span><strong>17</strong><small>5 perto do prazo</small></a>
+    <a class="kpi card" routerLink="/accounts-receivable"><span class="status">Saldo financeiro</span><strong>R$ 184 mil</strong><small>a receber menos a pagar</small></a>
   </div>
-  <div class="dashboard-grid">
-    <article class="panel"><header><h2>Campanhas recentes</h2><a routerLink="/campaigns">Ver todas</a></header><div class="table-placeholder"><span>Verão 2026</span><b>Em execução</b><span>Lançamento Creator</span><b>Em aprovação</b></div></article>
-    <article class="panel"><header><h2>Tarefas prioritárias</h2><a routerLink="/tasks">Ver todas</a></header><ul class="task-list"><li><span>Revisar proposta</span><small>Hoje</small></li><li><span>Validar entregável</span><small>Hoje</small></li><li><span>Conciliar recebimento</span><small>Amanhã</small></li></ul></article>
+  <div class="grid">
+    <article class="card panel">
+      <header><h2>Campanhas recentes</h2><a routerLink="/campaigns">Ver todas</a></header>
+      <div class="row"><span>Verão 2026</span><span class="status status--ok">Em execução</span></div>
+      <div class="row"><span>Lançamento Creator</span><span class="status status--atencao">Em aprovação</span></div>
+    </article>
+    <article class="card panel">
+      <header><h2>Tarefas prioritárias</h2><a routerLink="/tasks">Ver todas</a></header>
+      <div class="row"><span>Revisar proposta</span><span class="mono">hoje</span></div>
+      <div class="row"><span>Validar entregável</span><span class="mono">hoje</span></div>
+      <div class="row"><span>Conciliar recebimento</span><span class="mono">amanhã</span></div>
+    </article>
   </div>
 </section>
