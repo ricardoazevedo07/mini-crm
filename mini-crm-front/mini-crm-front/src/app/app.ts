@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
+import { ROLES, RoleService } from './shared/role.service';
 
 type Theme = 'light' | 'dark';
 
@@ -17,6 +18,8 @@ export class App {
   protected menuOpen = false;
   protected theme: Theme = 'light';
   protected pageTitle = 'Gestão';
+  protected readonly roles = inject(RoleService);
+  protected readonly roleList = ROLES;
 
   constructor() {
     const saved = this.read('crm.theme');

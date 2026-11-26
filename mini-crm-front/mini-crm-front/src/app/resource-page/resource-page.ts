@@ -2,6 +2,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProblemDetails } from '../core/api-models';
 import { CrmApiService } from '../core/crm-api.service';
+import { RoleService } from '../shared/role.service';
+import { FormField, buildFields, fromInput, labelOf, toInput } from '../shared/form-fields';
 
 @Component({
   selector: 'app-resource-page',
@@ -12,6 +14,7 @@ import { CrmApiService } from '../core/crm-api.service';
 export class ResourcePage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly api = inject(CrmApiService);
+  protected readonly roles = inject(RoleService);
 
   title = 'Recurso';
   resource = '';
@@ -23,6 +26,13 @@ export class ResourcePage implements OnInit {
   bodyText = '{}';
   selected: Record<string, unknown> | null = null;
   commands: { label: string; path: string }[] = [];
+  /** Modelo do corpo (bodyTemplate da rota) usado para montar os campos. */
+  private template: Record<string, unknown> = {};
+  /** Base do corpo enviado: o template (novo) ou o registro inteiro (edição), como antes. */
+  private base: Record<string, unknown> = {};
+  fields: FormField[] = [];
+  values: Record<string, string | boolean> = {};
+  advanced = false;
 
   ngOnInit(): void {
     this.route.data.subscribe((data) => {
@@ -35,12 +45,18 @@ export class ResourcePage implements OnInit {
         this.resource = resource;
       });
       this.bodyText = String(data['bodyTemplate'] ?? '{}');
+      try { this.template = JSON.parse(this.bodyText); } catch { this.template = {}; }
       this.commands = Array.isArray(data['commands']) ? data['commands'] as { label: string; path: string }[] : [];
       this.load();
     });
   }
 
+  get blocked(): string | null {
+    return this.roles.blockedMessage(this.resource);
+  }
+
   load(): void {
+    if (this.blocked) { this.items = []; this.loading = false; this.error = null; return; }
     this.loading = true;
     this.error = null;
     this.api.list<unknown>(this.resource).subscribe({
@@ -58,6 +74,8 @@ export class ResourcePage implements OnInit {
 
   openCreate(): void {
     this.editingId = null;
+    this.error = null;
+    this.prepareForm({ ...this.template });
     this.formOpen = true;
   }
 
@@ -67,13 +85,58 @@ export class ResourcePage implements OnInit {
 
   openEdit(item: Record<string, unknown>): void {
     this.editingId = (item['id'] ?? item['entidadeComercialId'] ?? null) as string | number | null;
-    this.bodyText = JSON.stringify(item, null, 2);
+    this.error = null;
+    this.prepareForm({ ...item });
     this.formOpen = true;
+  }
+
+  /** Prepara campos e valores; o JSON avançado continua disponível e sincronizado. */
+  private prepareForm(base: Record<string, unknown>): void {
+    this.base = base;
+    const shape = Object.keys(this.template).length ? this.template : this.scalarShape(base);
+    this.fields = buildFields(shape).filter((f) => this.roles.canSeeValues || !this.roles.isMoneyKey(f.key));
+    this.values = {};
+    this.fields.forEach((f) => { this.values[f.key] = toInput(f, base[f.key] ?? shape[f.key]); });
+    this.bodyText = JSON.stringify(base, null, 2);
+    this.advanced = this.fields.length === 0;
+  }
+
+  /** Para rotas sem template, edita os campos simples (texto, número, sim/não) do próprio registro. */
+  private scalarShape(item: Record<string, unknown>): Record<string, unknown> {
+    const shape: Record<string, unknown> = {};
+    Object.keys(item).forEach((k) => {
+      const v = item[k];
+      if (k !== 'id' && (v === null || ['string', 'number', 'boolean'].includes(typeof v))) shape[k] = v;
+    });
+    return shape;
+  }
+
+  /** Corpo a enviar: a base com os campos do formulário aplicados (mesmas chaves e tipos de antes). */
+  private bodyFromFields(): Record<string, unknown> {
+    const body: Record<string, unknown> = { ...this.base };
+    this.fields.forEach((f) => { body[f.key] = fromInput(f, this.values[f.key], this.base[f.key] ?? this.template[f.key]); });
+    return body;
+  }
+
+  toggleAdvanced(): void {
+    if (!this.advanced) {
+      this.bodyText = JSON.stringify(this.bodyFromFields(), null, 2);
+    } else {
+      try {
+        const parsed = JSON.parse(this.bodyText) as Record<string, unknown>;
+        this.base = parsed;
+        this.fields.forEach((f) => { this.values[f.key] = toInput(f, parsed[f.key]); });
+      } catch {
+        this.error = { status: 400, code: 'validation_error', detail: 'Corrija o JSON antes de voltar aos campos.' };
+        return;
+      }
+    }
+    this.advanced = !this.advanced;
   }
 
   save(): void {
     try {
-      const body = JSON.parse(this.bodyText);
+      const body = this.advanced ? JSON.parse(this.bodyText) : this.bodyFromFields();
       const request = this.editingId === null
         ? this.api.create(this.resource, body)
         : this.api.update(this.resource, this.editingId, body);
@@ -104,8 +167,13 @@ export class ResourcePage implements OnInit {
 
   /** Transforma o nome técnico do campo em rótulo legível (ex.: dataVencimentoUtc → Data vencimento). */
   label(key: string): string {
-    const words = key.replace(/Utc$/, '').replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/_/g, ' ').toLowerCase();
-    return words.charAt(0).toUpperCase() + words.slice(1);
+    return labelOf(key);
+  }
+
+  /** Valor exibido na tabela/detalhe: esconde dinheiro para quem não vê valores. */
+  show(key: string, value: unknown): unknown {
+    if (!this.roles.canSeeValues && this.roles.isMoneyKey(key)) return 'Oculto';
+    return value ?? '—';
   }
 
   isStatus(key: string): boolean {

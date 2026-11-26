@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { RoleService } from '../shared/role.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -6,4 +7,6 @@ import { Component } from '@angular/core';
   styleUrl: './dashboard.css',
   templateUrl: './dashboard.html',
 })
-export class Dashboard {}
+export class Dashboard {
+  protected readonly roles = inject(RoleService);
+}

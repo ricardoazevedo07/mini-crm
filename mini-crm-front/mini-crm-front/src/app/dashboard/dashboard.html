@@ -1,4 +1,7 @@
 <section class="dash">
+  @if (roles.blockedMessage('dashboard'); as msg) {
+    <div class="state"><svg class="ic" width="18" height="18" viewBox="0 0 32 32" aria-hidden="true" fill="currentColor"><path d="M30.94,15.66A16.69,16.69,0,0,0,16,5,16.69,16.69,0,0,0,1.06,15.66a1,1,0,0,0,0,.68A16.69,16.69,0,0,0,16,27,16.69,16.69,0,0,0,30.94,16.34,1,1,0,0,0,30.94,15.66ZM16,25c-5.3,0-10.9-3.93-12.93-9C5.1,10.93,10.7,7,16,7s10.9,3.93,12.93,9C26.9,21.07,21.3,25,16,25Z"/><path d="M16,10a6,6,0,1,0,6,6A6,6,0,0,0,16,10Zm0,10a4,4,0,1,1,4-4A4,4,0,0,1,16,20Z"/></svg><strong>{{ msg }}</strong><span>Vendo como {{ roles.role }}. Troque o perfil em “Ver como”, no topo.</span></div>
+  } @else {
   <header class="page-header">
     <div><p class="eyebrow">Visão geral</p><h1>Gestão</h1><p>Oportunidades, campanhas, entregas e caixa em um só lugar. Números de exemplo até a tela ser ligada à API.</p></div>
     <a class="btn btn--primary" routerLink="/campaigns"><svg class="ic" width="18" height="18" viewBox="0 0 32 32" aria-hidden="true" fill="currentColor"><path d="M17 15 17 8 15 8 15 15 8 15 8 17 15 17 15 24 17 24 17 17 24 17 24 15z"/></svg>Nova campanha</a>
@@ -7,7 +10,7 @@
     <a class="kpi card" routerLink="/opportunities"><span class="status status--acao">Oportunidades abertas</span><strong>12</strong><small>3 em proposta</small></a>
     <a class="kpi card" routerLink="/campaigns"><span class="status status--ok">Campanhas ativas</span><strong>8</strong><small>2 em aprovação</small></a>
     <a class="kpi card" routerLink="/deliverables"><span class="status status--atencao">Entregas pendentes</span><strong>17</strong><small>5 perto do prazo</small></a>
-    <a class="kpi card" routerLink="/accounts-receivable"><span class="status">Saldo financeiro</span><strong>R$ 184 mil</strong><small>a receber menos a pagar</small></a>
+    <a class="kpi card" routerLink="/accounts-receivable"><span class="status">Saldo financeiro</span><strong>{{ roles.blockedMessage('accounts-receivable') ? 'Oculto' : 'R$ 184 mil' }}</strong><small>a receber menos a pagar</small></a>
   </div>
   <div class="grid">
     <article class="card panel">
@@ -22,4 +25,5 @@
       <div class="row"><span>Conciliar recebimento</span><span class="mono">amanhã</span></div>
     </article>
   </div>
+  }
 </section>
